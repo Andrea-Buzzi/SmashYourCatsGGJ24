@@ -5,27 +5,23 @@ using TMPro;
 
 public class MenuPlay : MonoBehaviour
 {
-    public TextMeshProUGUI playText;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    private void OnMouseOver()
-    {
-        playText.color = Color.white;
-    }
+    public GameObject menuCanvas;
+    public GameObject creditsCanvas;
 
     public void StartGame()
     {
         Debug.Log("start");
+    }
+
+    public void Credits()
+    {
+        menuCanvas.SetActive(false);
+        creditsCanvas.SetActive(true);
+    }
+
+    public void BackToMenu()
+    {
+        creditsCanvas.SetActive(false);
+        menuCanvas.SetActive(true);
     }
 }
