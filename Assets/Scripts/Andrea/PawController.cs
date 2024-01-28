@@ -5,12 +5,13 @@ using UnityEngine;
 public class PawController : MonoBehaviour
 {
     public float Intensity;
-    public float Power;
     public ObjMovement ObjRef;
+    public float MaxPower;
 
     private bool colliderTouched = false;
     private bool justPressed;
     private Transform initialTrans;
+    private float Power;
 
     // Start is called before the first frame update
     void Start()
@@ -22,15 +23,23 @@ public class PawController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButton(0))
+        if (Power != MaxPower)
         {
-            CalculatePower();
-            print(Power);
+            if (Input.GetMouseButton(0))
+            {
+                CalculatePower();
+                print(Power);
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                justPressed = true;
+            }
         }
-        else if (Input.GetMouseButtonUp(0))
+        else
         {
             justPressed = true;
         }
+        
 
         if (!colliderTouched && justPressed)
         {
@@ -40,12 +49,26 @@ public class PawController : MonoBehaviour
 
     void CalculatePower()
     {
-        Power += 2;
+        if (Power < MaxPower)
+        {
+            Power += 2;
+        }
+        
     }
 
     public float GetPower()
     {
         return Power;
+    }
+    
+    public float GetMaxPower()
+    {
+        return MaxPower;
+    }
+    
+    public void ResetPower()
+    {
+        Power = 0;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
