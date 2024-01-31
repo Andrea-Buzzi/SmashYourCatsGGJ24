@@ -3,36 +3,72 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public ObjectMovementChecker objectMovementChecker;
     public GameObject paw;
-    public GameObject objectToReset;
     public Slider slider;
     public PawController pawController;
 
     private Vector3 originalPawPosition;
-    private Vector3 originalObjectPosition;
+    private Vector3 originalObjectPosition; // Declaration of the variable
     private float originalSliderValue;
+    
+    public ObjectSpawner objectSpawner;
+    private GameObject objectToReset; // Now a private variable
+    private ObjectMovementChecker objectMovementChecker; // Now a private variable
 
     void Start()
     {
         originalPawPosition = paw.transform.position;
-        originalObjectPosition = objectToReset.transform.position;
         originalSliderValue = slider.value;
+
+        GameObject spawnedObject = objectSpawner.SpawnRandomObject();
+        AssignObjectMovementChecker(spawnedObject);
+        objectToReset = spawnedObject; // Assign the spawned object to objectToReset
+        if (spawnedObject != null)
+        {
+            originalObjectPosition = spawnedObject.transform.position; // Set the original position
+        }
     }
 
     public void ResetGame()
     {
         paw.transform.position = originalPawPosition;
-        objectToReset.transform.position = originalObjectPosition;
+        if (objectToReset != null)
+        {
+            objectToReset.transform.position = originalObjectPosition; // Reset to original position
+        }
         slider.value = originalSliderValue;
 
-        objectMovementChecker.ResetGameStates();
-        pawController.ResetPower();  // Reset the power
+        pawController.ResetPower();
+        if (objectMovementChecker != null)
+        {
+            objectMovementChecker.ResetGameStates();
+        }
 
-        if (objectMovementChecker.winCanvas != null) 
+        if (objectMovementChecker != null && objectMovementChecker.winCanvas != null) 
             objectMovementChecker.winCanvas.SetActive(false);
-        if (objectMovementChecker.loseCanvas != null) 
+        if (objectMovementChecker != null && objectMovementChecker.loseCanvas != null) 
             objectMovementChecker.loseCanvas.SetActive(false);
+        
+        pawController.colliderTouched = false;
+
+        GameObject spawnedObject = objectSpawner.SpawnRandomObject();
+        AssignObjectMovementChecker(spawnedObject);
+        objectToReset = spawnedObject; // Update the reference to the new object
+        if (spawnedObject != null)
+        {
+            originalObjectPosition = spawnedObject.transform.position; // Update the original position
+        }
     }
 
+    private void AssignObjectMovementChecker(GameObject spawnedObject)
+    {
+        if (spawnedObject != null)
+        {
+            objectMovementChecker = spawnedObject.GetComponent<ObjectMovementChecker>();
+            if (objectMovementChecker == null)
+            {
+                Debug.LogWarning("ObjectMovementChecker component not found on the spawned object.");
+            }
+        }
+    }
 }

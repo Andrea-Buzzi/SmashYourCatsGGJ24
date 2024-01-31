@@ -20,10 +20,9 @@ public class PawPowerUI : MonoBehaviour
 
     void Update()
     {
-        if (slider != null && pawPower != null)
+        if (slider != null && pawPower != null && !pawPower.IsPawMoving())
         {
             slider.value = pawPower.GetPower();
         }
     }
 }
-

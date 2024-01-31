@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems; // Import this namespace
 
-public class ChangeTextColor : MonoBehaviour
+public class ChangeTextColor : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public TextMeshProUGUI playText;
     private Color hoverColor;
@@ -12,17 +13,17 @@ public class ChangeTextColor : MonoBehaviour
     void Start()
     {
         hoverColor = Color.white;
-        normalColor = new Color(160, 162, 228, 255);
+        normalColor = new Color(160f / 255, 162f / 255, 228f / 255, 1);
     }
 
-    private void OnMouseOver()
+    // Implement the interface methods
+    public void OnPointerEnter(PointerEventData eventData)
     {
         playText.color = hoverColor;
     }
 
-    private void OnMouseExit()
+    public void OnPointerExit(PointerEventData eventData)
     {
         playText.color = normalColor;
     }
-
 }

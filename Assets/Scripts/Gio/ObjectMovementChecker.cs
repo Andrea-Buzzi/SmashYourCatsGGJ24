@@ -9,7 +9,7 @@ public class ObjectMovementChecker : MonoBehaviour
 
     private bool movementStarted = false;
     private bool isInWinZone = false;
-    private bool canShowCanvas = true;
+    public bool canShowCanvas = true;
     
     private float previousVelocityMagnitude = 0f; // Add this as a private field
 
@@ -95,6 +95,6 @@ public class ObjectMovementChecker : MonoBehaviour
         movementStarted = false;
         isInWinZone = false;
         canShowCanvas = true;
-        rb.velocity = Vector2.zero; // Reset the Rigidbody's velocity
+        rb.velocity = Vector2.zero;
     }
 }

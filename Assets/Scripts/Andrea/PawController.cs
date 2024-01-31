@@ -1,17 +1,25 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PawController : MonoBehaviour
 {
     public float Intensity;
     public ObjMovement ObjRef;
+    public ObjectMovementChecker IsCanvasEnabled;
     public float MaxPower;
 
-    private bool colliderTouched = false;
-    private bool justPressed;
+    public bool colliderTouched = false;
+    public bool justPressed;
     private Transform initialTrans;
     private float Power;
+    
+    public GameObject winCanvas;
+    public GameObject loseCanvas;
+    
+    private bool isPawMoving = false;
 
     // Start is called before the first frame update
     void Start()
@@ -23,27 +31,32 @@ public class PawController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Power != MaxPower)
+        if (!winCanvas.activeSelf && !loseCanvas.activeSelf && !EventSystem.current.IsPointerOverGameObject())
         {
-            if (Input.GetMouseButton(0))
+            if (Power != MaxPower)
             {
-                CalculatePower();
-                print(Power);
+                if (Input.GetMouseButton(0) && !isPawMoving)
+                {
+                    CalculatePower();
+                    print(Power);
+                }
+                else if (Input.GetMouseButtonUp(0))
+                {
+                    justPressed = true;
+                    isPawMoving = true;
+                }
             }
-            else if (Input.GetMouseButtonUp(0))
+            else if(Power >= MaxPower)
             {
                 justPressed = true;
+                isPawMoving = true;
             }
-        }
-        else
-        {
-            justPressed = true;
-        }
         
 
-        if (!colliderTouched && justPressed)
-        {
-            transform.position -= new Vector3( Intensity * Power * 0.01f, 0, 0);
+            if (!colliderTouched && justPressed)
+            {
+                transform.position -= new Vector3( Intensity * Power * 0.01f, 0, 0);
+            }
         }
     }
 
@@ -69,6 +82,12 @@ public class PawController : MonoBehaviour
     public void ResetPower()
     {
         Power = 0;
+        isPawMoving = false;
+    }
+    
+    public bool IsPawMoving()
+    {
+        return isPawMoving;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -82,5 +101,10 @@ public class PawController : MonoBehaviour
             //colliderTouched = false;
             //justPressed = false;
         }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        justPressed = false;
     }
 }
