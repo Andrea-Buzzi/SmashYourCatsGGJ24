@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,12 +9,15 @@ public class GameManager : MonoBehaviour
     public PawController pawController;
 
     private Vector3 originalPawPosition;
-    private Vector3 originalObjectPosition; // Declaration of the variable
+    private Vector3 originalObjectPosition;
     private float originalSliderValue;
     
     public ObjectSpawner objectSpawner;
-    private GameObject objectToReset; // Now a private variable
-    private ObjectMovementChecker objectMovementChecker; // Now a private variable
+    private GameObject objectToReset;
+    private ObjectMovementChecker objectMovementChecker;
+    
+    private int score = 0;
+    public TextMeshProUGUI scoreText;
 
     void Start()
     {
@@ -70,5 +74,18 @@ public class GameManager : MonoBehaviour
                 Debug.LogWarning("ObjectMovementChecker component not found on the spawned object.");
             }
         }
+    }
+    
+    public void UpdateScore(bool won)
+    {
+        if (won)
+        {
+            score++;
+        }
+        else
+        {
+            score = 0;
+        }
+        scoreText.text = score.ToString();
     }
 }

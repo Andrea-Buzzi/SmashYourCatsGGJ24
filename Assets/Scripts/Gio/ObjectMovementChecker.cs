@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class ObjectMovementChecker : MonoBehaviour
 {
@@ -6,17 +7,23 @@ public class ObjectMovementChecker : MonoBehaviour
     public GameObject winCanvas;
     public GameObject loseCanvas;
     public float stopThreshold = 0.1f;
+    public AudioSource crashAudio;
 
     private bool movementStarted = false;
     private bool isInWinZone = false;
     public bool canShowCanvas = true;
-    
-    private float previousVelocityMagnitude = 0f; // Add this as a private field
+    private float previousVelocityMagnitude = 0f;
+    private GameManager gameManager;
 
     void Start()
     {
         winCanvas.SetActive(false);
         loseCanvas.SetActive(false);
+        gameManager = FindObjectOfType<GameManager>();
+        if (gameManager == null)
+        {
+            Debug.LogError("GameManager not found in the scene.");
+        }
     }
 
     void Update()
@@ -28,31 +35,25 @@ public class ObjectMovementChecker : MonoBehaviour
 
     private void CheckMovement()
     {
-        // Check for movement start
         if (!movementStarted && ObjMovement.StartForce)
         {
             movementStarted = true;
         }
 
-        // Store the current velocity magnitude for comparison in the next frame
         float currentVelocityMagnitude = rb.velocity.magnitude;
 
-        // Check for stopping conditions
         if (movementStarted)
         {
-            // Check if the object is in the win zone and has come to a stop
             if (isInWinZone && currentVelocityMagnitude < stopThreshold && previousVelocityMagnitude > stopThreshold)
             {
                 ShowWinCanvas();
             }
-            // Check if the object is not in the win zone but has come to a stop
             else if (!isInWinZone && currentVelocityMagnitude < stopThreshold && previousVelocityMagnitude > stopThreshold)
             {
                 ShowLoseCanvas();
             }
         }
 
-        // Update previousVelocityMagnitude for the next frame
         previousVelocityMagnitude = currentVelocityMagnitude;
     }
 
@@ -78,6 +79,10 @@ public class ObjectMovementChecker : MonoBehaviour
         {
             winCanvas.SetActive(true);
             canShowCanvas = false;
+            if (gameManager != null) 
+            {
+                gameManager.UpdateScore(true);
+            }
         }
     }
 
@@ -85,8 +90,23 @@ public class ObjectMovementChecker : MonoBehaviour
     {
         if (loseCanvas != null && canShowCanvas)
         {
-            loseCanvas.SetActive(true);
             canShowCanvas = false;
+            StartCoroutine(ShowLoseCanvasAfterSound());
+        }
+    }
+
+    private IEnumerator ShowLoseCanvasAfterSound()
+    {
+        if (crashAudio != null)
+        {
+            crashAudio.Play();
+            yield return new WaitForSeconds(crashAudio.clip.length);
+        }
+
+        loseCanvas.SetActive(true);
+        if (gameManager != null) 
+        {
+            gameManager.UpdateScore(false);
         }
     }
 

@@ -20,6 +20,7 @@ public class PawController : MonoBehaviour
     public GameObject loseCanvas;
     
     private bool isPawMoving = false;
+    public AudioSource PawAudio;
 
     // Start is called before the first frame update
     void Start()
@@ -44,6 +45,7 @@ public class PawController : MonoBehaviour
                 {
                     justPressed = true;
                     isPawMoving = true;
+                    PawAudio.Play();
                 }
             }
             else if(Power >= MaxPower)
